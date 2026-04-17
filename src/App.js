@@ -198,8 +198,6 @@ function App() {
         
         <div className="w-full md:w-48 h-48 md:h-40 lg:h-48 flex-shrink-0 overflow-hidden rounded-2xl border border-white/10 relative">
           <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all duration-500 z-10"></div>
-          {/* If your image in menuData is an emoji, it will render as broken image. If it's a URL, it works. 
-              Using a fallback if it's not a URL just in case! */}
           {item.image && item.image.startsWith('http') ? (
             <img src={item.image} alt={item.name} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
           ) : (
@@ -239,7 +237,7 @@ function App() {
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-red-600/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
       </div>
 
-      {/* 🌟 UPGRADED: Mobile Responsive Navbar */}
+      {/* Navigation */}
       <nav className="fixed top-0 left-0 w-full z-40 glass border-b border-white/10 backdrop-blur-md bg-black/40">
         <div className="max-w-6xl mx-auto px-4 md:px-6 py-3 md:py-5 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-0">
           <div className="text-2xl md:text-3xl font-black font-display gradient-text tracking-wider cursor-pointer" onClick={() => setCurrentPage('home')}>
@@ -277,7 +275,6 @@ function App() {
         {/* ---- HOME PAGE ---- */}
         {currentPage === 'home' && (
           <div className="max-w-5xl mx-auto text-center mt-10 md:mt-20 animate-fadeIn px-2 md:px-0">
-            {/* 🌟 UPGRADED: Mobile Responsive Hero */}
             <div className="glass neon-glow rounded-3xl p-8 md:p-16 border border-white/10">
               <div className="text-6xl md:text-8xl mb-6 md:mb-8 animate-float">🍽️</div>
               <h1 className="text-4xl sm:text-6xl md:text-8xl font-black mb-4 md:mb-6 font-display gradient-text leading-tight">
@@ -363,6 +360,62 @@ function App() {
             </div>
 
             <div className="max-w-6xl mx-auto space-y-6 md:space-y-8">
+              
+              {isRestaurantClosed && (
+                <div className="glass rounded-3xl overflow-hidden border border-red-500/30 neon-glow-strong mb-8">
+                  <div className="p-6 md:p-12 text-center">
+                    <div className="text-7xl md:text-9xl mb-4 md:mb-6 animate-float">🔒</div>
+                    <h2 className="text-4xl md:text-6xl font-black text-red-400 mb-3 md:mb-4 font-display">We're Currently Closed</h2>
+                    <p className="text-gray-300 text-lg md:text-2xl mb-4 md:mb-6">Our restaurant is closed from 2 AM to 9 AM</p>
+                    <div className="glass border border-orange-500/30 rounded-2xl p-4 md:p-6 inline-block">
+                      <p className="text-gray-300 text-base md:text-lg mb-2 md:mb-3 font-semibold">Opening Hours:</p>
+                      <div className="text-left space-y-2 text-gray-400 text-sm md:text-base">
+                        <p>🍳 <span className="text-yellow-400 font-bold">Breakfast:</span> 9 AM - 12 PM</p>
+                        <p>🍔 <span className="text-green-400 font-bold">Lunch:</span> 12 PM - 6 PM</p>
+                        <p>🍝 <span className="text-purple-400 font-bold">Dinner:</span> 7 PM - 2 AM</p>
+                        <p>🍰 <span className="text-pink-400 font-bold">Dessert:</span> 12 PM - 6 PM & 7 PM - 2 AM</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* DESSERT BOX */}
+              {isDessertAvailable ? (
+                <div className="card-3d glass rounded-3xl overflow-hidden border border-pink-500/20 neon-glow">
+                  <div onClick={() => toggleCategory('dessert')} className="p-6 md:p-10 cursor-pointer hover:bg-white/5 transition-all duration-300">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4 md:space-x-6">
+                        <div className="text-4xl md:text-7xl bg-gradient-to-br from-pink-500/20 to-red-500/20 p-4 md:p-6 rounded-2xl md:rounded-3xl border border-pink-500/30 backdrop-blur-sm">🍰</div>
+                        <div>
+                          <h2 className="text-3xl md:text-5xl font-black text-pink-400 mb-1 md:mb-2 font-display">Dessert</h2>
+                          <p className="text-gray-400 text-sm md:text-lg font-light">Sweet treats & delightful desserts</p>
+                        </div>
+                      </div>
+                      <div className="text-3xl md:text-5xl text-gray-500 transition-transform duration-300" style={{ transform: expandedCategory === 'dessert' ? 'rotate(180deg)' : 'rotate(0deg)' }}>▼</div>
+                    </div>
+                  </div>
+                  {expandedCategory === 'dessert' && (
+                    <div className="px-4 md:px-10 pb-6 md:pb-10 pt-4 bg-gradient-to-b from-pink-950/20 to-transparent border-t border-pink-500/20 space-y-4 md:space-y-6 animate-fadeIn">
+                      {menuData.dessert.map(item => <FoodItem key={item.id} item={item} />)}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="glass rounded-3xl overflow-hidden border border-gray-700/50 opacity-60">
+                  <div className="p-6 md:p-10 flex items-center justify-between">
+                    <div className="flex items-center space-x-4 md:space-x-6">
+                      <div className="text-4xl md:text-7xl grayscale opacity-50 bg-gray-800/30 p-4 md:p-6 rounded-2xl md:rounded-3xl border border-gray-700/30">🍰</div>
+                      <div>
+                        <h2 className="text-3xl md:text-5xl font-black text-gray-600 mb-1 md:mb-2 font-display">Dessert</h2>
+                        <p className="text-gray-500 text-sm md:text-lg font-light">Available 12 PM - 6 PM & 7 PM - 2 AM</p>
+                      </div>
+                    </div>
+                    <div className="hidden sm:block bg-red-900/30 text-red-400 px-4 md:px-6 py-2 md:py-3 rounded-xl font-bold text-sm md:text-lg border border-red-800/50">⏰ Unavailable</div>
+                  </div>
+                </div>
+              )}
+
               {/* BREAKFAST BOX */}
               {isBreakfastAvailable ? (
                 <div className="card-3d glass rounded-3xl overflow-hidden border border-yellow-500/20 neon-glow">
@@ -515,7 +568,7 @@ function App() {
         </div>
       </button>
 
-      {/* Cart Modal - Fully Mobile Optimized */}
+      {/* Cart Modal */}
       {showCart && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50" onClick={() => setShowCart(false)}>
           <div className="fixed right-0 top-0 h-full w-full sm:w-[400px] md:max-w-md bg-gradient-to-b from-gray-900 to-black overflow-y-auto animate-slideInRight border-l border-white/10 flex flex-col" onClick={(e) => e.stopPropagation()}>
@@ -594,7 +647,7 @@ function App() {
         </div>
       )}
 
-      {/* Checkout Modal - Fully Mobile Optimized */}
+      {/* Checkout Modal */}
       {showCheckout && (
         <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] flex items-center justify-center p-2 md:p-4" onClick={() => setShowCheckout(false)}>
           <div className="glass rounded-2xl md:rounded-3xl w-full max-w-2xl max-h-[95vh] md:max-h-[90vh] overflow-y-auto border border-white/20 neon-glow" onClick={(e) => e.stopPropagation()}>
@@ -719,7 +772,7 @@ function App() {
         </div>
       )}
 
-      {/* Live Tracking Order Confirmation - Mobile Optimized */}
+      {/* Live Tracking Order Confirmation */}
       {orderSubmitted && currentOrder && (
         <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[70] flex items-center justify-center p-2 md:p-4">
           <div className="glass rounded-2xl md:rounded-3xl w-full max-w-2xl border border-white/20 neon-glow-strong animate-fadeIn max-h-[95vh] md:max-h-[90vh] overflow-y-auto">
@@ -782,7 +835,7 @@ function App() {
         </div>
       )}
 
-      {/* OBVIOUS ADMIN BUTTON */}
+      {/* ADMIN BUTTON */}
       <button 
         onClick={() => setCurrentPage('admin')} 
         className="fixed bottom-6 left-4 md:bottom-8 md:left-8 bg-orange-600 text-white px-4 py-2 md:px-6 md:py-3 rounded-xl font-bold z-[100] shadow-[0_0_15px_rgba(251,146,60,0.5)] border border-white/20 transition-transform hover:scale-105 text-sm md:text-base"
