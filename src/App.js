@@ -36,6 +36,9 @@ function App() {
   const [currentOrder, setCurrentOrder] = useState(null);
   const [liveOrderStatus, setLiveOrderStatus] = useState('pending'); 
 
+  // 🌟 NEW: Secret click tracker for the Admin Backdoor
+  const [secretClickCount, setSecretClickCount] = useState(0);
+
   const RESTAURANT_HOURS = {
     BREAKFAST_START: 9,   
     BREAKFAST_END: 12,    
@@ -85,6 +88,31 @@ function App() {
       return () => unsub(); 
     }
   }, [orderSubmitted, currentOrder]);
+
+  // 🌟 NEW: The Secret Backdoor Logic
+  const handleLogoClick = () => {
+    const newCount = secretClickCount + 1;
+    setSecretClickCount(newCount);
+
+    if (newCount >= 5) {
+      // Trigger the secret prompt on the 5th click
+      const passcode = window.prompt("Sabrosa System: Enter Admin PIN");
+      
+      // CHANGE "7777" TO WHATEVER PIN YOU WANT!
+      if (passcode === "7777") {
+        setCurrentPage('admin');
+      } else if (passcode !== null) {
+        alert("Access Denied: Incorrect PIN.");
+      }
+      setSecretClickCount(0); // Reset clicks
+    } else {
+      // Normal behavior for regular customers
+      setCurrentPage('home');
+      
+      // Reset the counter if they stop clicking after a few seconds
+      setTimeout(() => setSecretClickCount(0), 3000);
+    }
+  };
 
   const toggleCategory = (category) => {
     if (expandedCategory === category) {
@@ -240,9 +268,15 @@ function App() {
       {/* Navigation */}
       <nav className="fixed top-0 left-0 w-full z-40 glass border-b border-white/10 backdrop-blur-md bg-black/40">
         <div className="max-w-6xl mx-auto px-4 md:px-6 py-3 md:py-5 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-0">
-          <div className="text-2xl md:text-3xl font-black font-display gradient-text tracking-wider cursor-pointer" onClick={() => setCurrentPage('home')}>
+          
+          {/* 🌟 UPGRADED: The Secret Logo Trigger */}
+          <div 
+            className="text-2xl md:text-3xl font-black font-display gradient-text tracking-wider cursor-pointer select-none" 
+            onClick={handleLogoClick}
+          >
             SABROSA
           </div>
+
           <div className="flex items-center space-x-4 md:space-x-8 overflow-x-auto w-full md:w-auto justify-center md:justify-end pb-1 md:pb-0 hide-scrollbar scroll-smooth">
             {['home', 'about', 'menu', 'contact'].map((page) => (
               <button
@@ -835,14 +869,7 @@ function App() {
         </div>
       )}
 
-      {/* ADMIN BUTTON */}
-      <button 
-        onClick={() => setCurrentPage('admin')} 
-        className="fixed bottom-6 left-4 md:bottom-8 md:left-8 bg-orange-600 text-white px-4 py-2 md:px-6 md:py-3 rounded-xl font-bold z-[100] shadow-[0_0_15px_rgba(251,146,60,0.5)] border border-white/20 transition-transform hover:scale-105 text-sm md:text-base"
-      >
-        ⚙️ Admin
-      </button>
-
+      {/* ADMIN DASHBOARD RENDER */}
       {currentPage === 'admin' && (
         <div className="fixed inset-0 z-[100] bg-black overflow-y-auto">
           <AdminDashboard />
