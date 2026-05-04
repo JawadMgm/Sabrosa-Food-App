@@ -220,39 +220,64 @@ function App() {
     }
   };
 
-  const FoodItem = ({ item }) => (
-    <div className="card-3d glass rounded-3xl p-5 md:p-6 hover:neon-glow transition-all duration-500 border border-white/10 group">
-      <div className="flex flex-col md:flex-row items-start space-y-4 md:space-y-0 md:space-x-6">
+const FoodItem = ({ item }) => {
+    // Smart Image Detector
+    const isImageFile = item.image && (item.image.includes('/') || item.image.includes('.'));
+    const imageSrc = isImageFile && item.image.startsWith('http') 
+      ? item.image 
+      : `${process.env.PUBLIC_URL}${item.image}`;
+
+    return (
+      <div className="relative glass rounded-[2rem] p-4 md:p-6 transition-all duration-500 border border-white/5 hover:border-orange-500/30 group overflow-hidden flex flex-row items-stretch gap-4 md:gap-6 bg-gradient-to-br from-white/5 to-transparent shadow-lg hover:shadow-orange-500/10">
         
-        <div className="w-full md:w-48 h-48 md:h-40 lg:h-48 flex-shrink-0 overflow-hidden rounded-2xl border border-white/10 relative">
-          <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all duration-500 z-10"></div>
-          {item.image && item.image.startsWith('http') ? (
-            <img src={item.image} alt={item.name} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
+        {/* Left Side: Information & Actions */}
+        <div className="flex-grow flex flex-col justify-between py-1 md:py-2">
+          <div>
+            <h3 className="text-lg md:text-3xl font-bold text-white leading-tight font-display mb-1 md:mb-3 pr-2">
+              {item.name}
+            </h3>
+            <p className="text-gray-400 text-xs md:text-base leading-relaxed mb-3 md:mb-4 font-light line-clamp-2 md:line-clamp-3 pr-4">
+              {item.description}
+            </p>
+          </div>
+
+          <div className="flex items-center justify-between mt-auto pr-2 md:pr-4">
+            <span className="text-base md:text-2xl font-bold text-orange-400 tracking-wide">
+              ৳{item.price.toFixed(2)}
+            </span>
+
+            {/* Premium 'Add' Button - Minimal on mobile, full text on desktop */}
+            <button 
+              onClick={() => addToCart(item)}
+              className="bg-white/10 hover:bg-gradient-to-r hover:from-orange-600 hover:to-red-600 text-white md:px-6 py-2 w-10 md:w-auto rounded-full md:rounded-xl font-bold transition-all duration-300 transform hover:scale-105 border border-white/10 hover:border-transparent flex items-center justify-center gap-2"
+            >
+              <span className="hidden md:inline">Add to Cart</span>
+              <span className="text-lg md:text-xl leading-none">＋</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Right Side: Perfectly Proportioned High-Res Image */}
+        <div className="w-28 h-28 md:w-48 md:h-48 flex-shrink-0 overflow-hidden rounded-2xl md:rounded-[1.5rem] border border-white/10 relative shadow-2xl self-center">
+          {/* Subtle dark gradient overlay that fades on hover */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
+          
+          {isImageFile ? (
+            <img 
+              src={imageSrc} 
+              alt={item.name} 
+              className="w-full h-full object-cover transform group-hover:scale-110 group-hover:rotate-1 transition-all duration-700 ease-out" 
+            />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-orange-500/20 to-red-500/20 flex items-center justify-center text-6xl">{item.image}</div>
+            <div className="w-full h-full bg-gradient-to-br from-orange-500/20 to-red-500/20 flex items-center justify-center text-4xl md:text-6xl">
+              {item.image}
+            </div>
           )}
         </div>
 
-        <div className="flex-grow w-full">
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-2 md:mb-3 gap-2">
-            <h3 className="text-xl md:text-2xl font-bold text-white leading-tight font-display">{item.name}</h3>
-            <span className="text-lg md:text-xl font-bold gradient-text bg-gradient-to-br from-orange-400/10 to-red-400/10 px-3 py-1 md:px-4 md:py-2 rounded-xl border border-orange-500/20 backdrop-blur-sm self-start whitespace-nowrap">
-              ৳{item.price.toFixed(2)}
-            </span>
-          </div>
-          <p className="text-gray-400 text-sm md:text-base leading-relaxed mb-4 md:mb-6 font-light">{item.description}</p>
-          <button 
-            onClick={() => addToCart(item)}
-            className="w-full md:w-auto bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white px-6 md:px-8 py-3 rounded-xl font-bold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(251,146,60,0.3)] border border-orange-500/50 flex items-center justify-center space-x-2"
-          >
-            <span>Add to Cart</span>
-            <span className="text-xl">🛒</span>
-          </button>
-        </div>
       </div>
-    </div>
-  );
-
+    );
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 pb-32 relative overflow-hidden">
       
